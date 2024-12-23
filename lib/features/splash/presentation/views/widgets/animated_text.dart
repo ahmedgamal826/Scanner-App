@@ -13,16 +13,9 @@ class AnimatedText extends StatelessWidget {
         TyperAnimatedText(
           'Scanner App',
           textStyle: const TextStyle(
-            fontSize: 30,
+            fontSize: 32,
             fontWeight: FontWeight.bold,
-            color: Colors.blue,
-            shadows: [
-              Shadow(
-                color: Colors.black26,
-                blurRadius: 10,
-                offset: Offset(2, 2),
-              ),
-            ],
+            color: Colors.orange,
           ),
           textAlign: TextAlign.center,
           speed: const Duration(milliseconds: 150),

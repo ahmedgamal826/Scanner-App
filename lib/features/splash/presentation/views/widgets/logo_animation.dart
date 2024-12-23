@@ -40,6 +40,7 @@ class _LogoAnimationState extends State<LogoAnimation>
     return FadeTransition(
       opacity: _fadeAnimation,
       child: Image.asset(
+        color: Colors.orange,
         'assets/imagetext.png',
       ),
     );
