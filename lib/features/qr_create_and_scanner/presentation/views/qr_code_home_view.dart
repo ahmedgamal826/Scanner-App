@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:scanner_app/features/qr_create_and_scanner/presentation/views/qr_code_create.dart';
 import 'package:scanner_app/features/qr_create_and_scanner/presentation/views/qr_code_scanner.dart';
+import 'package:scanner_app/features/qr_create_and_scanner/presentation/views/widgets/qr_button.dart';
+import 'package:scanner_app/features/qr_create_and_scanner/presentation/views/widgets/qr_home_app_bar.dart';
 
 class QrCodeHomeView extends StatefulWidget {
   @override
@@ -11,26 +13,12 @@ class _QrCodeHomeViewState extends State<QrCodeHomeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text(
-          'QR Code Options',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 23,
-            fontStyle: FontStyle.italic,
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.orange,
-      ),
+      appBar: const QrHomeAppBar(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const Text(
                 'Choose an option',
@@ -41,8 +29,8 @@ class _QrCodeHomeViewState extends State<QrCodeHomeView> {
                 ),
               ),
               const SizedBox(height: 20),
-              // Create QR Code Button
-              ElevatedButton(
+              QrButton(
+                btnText: 'Create QR Code',
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -51,35 +39,9 @@ class _QrCodeHomeViewState extends State<QrCodeHomeView> {
                     ),
                   );
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange, // Button color
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 40,
-                    vertical: 15,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.create, color: Colors.white),
-                    SizedBox(width: 10),
-                    Text(
-                      'Create QR Code',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 19,
-                      ),
-                    ),
-                  ],
-                ),
               ),
               const SizedBox(height: 20),
-
-              // Scan QR Code Button
-              ElevatedButton(
+              QrButton(
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -88,31 +50,8 @@ class _QrCodeHomeViewState extends State<QrCodeHomeView> {
                     ),
                   );
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange, // Button color
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 40,
-                    vertical: 15,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.qr_code_scanner, color: Colors.white),
-                    SizedBox(width: 10),
-                    Text(
-                      'Scan QR Code',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                btnText: 'Scan QR Code',
+              )
             ],
           ),
         ),

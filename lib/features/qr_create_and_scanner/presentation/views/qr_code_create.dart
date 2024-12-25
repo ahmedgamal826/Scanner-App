@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:scanner_app/features/qr_create_and_scanner/presentation/views/widgets/qr_generate_button.dart';
 import 'package:scanner_app/features/qr_create_and_scanner/presentation/views/widgets/qr_text_field.dart';
 
 class QrCodeCreate extends StatefulWidget {
@@ -41,31 +42,17 @@ class _QrCodeCreateState extends State<QrCodeCreate> {
             children: <Widget>[
               QrCreateTextField(textController: _textController),
               const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _qrData = _textController.text;
-                  });
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
-                ),
-                child: const Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Text(
-                    'Generate QR Code',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                    ),
-                  ),
-                ),
-              ),
+              QrGenerateButton(onPressed: () {
+                setState(() {
+                  _qrData = _textController.text;
+                });
+              }),
               const SizedBox(height: 16),
               if (_qrData.isNotEmpty)
                 QrImageView(
                   data: _qrData,
-                  version: QrVersions.auto,
+                  version: QrVersions
+                      .auto, // كلما زادت البيانات المراد ترميزها، زادت تعقيد نسخة رمز QR
                   size: 200.0,
                   backgroundColor: Colors.white,
                 ),

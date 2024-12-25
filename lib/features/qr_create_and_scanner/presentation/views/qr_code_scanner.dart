@@ -1,9 +1,10 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:qr_code_scanner_plus/qr_code_scanner_plus.dart';
-import 'package:qr_flutter/qr_flutter.dart';
-import 'package:scanner_app/features/image_to_text/presentation/views/widgets/show_snack_bar.dart';
+import 'package:scanner_app/features/qr_create_and_scanner/data/provider/qr_scanner_provider.dart';
+import 'package:scanner_app/features/qr_create_and_scanner/presentation/views/widgets/animated_blue_line.dart';
+import 'package:scanner_app/features/qr_create_and_scanner/presentation/views/widgets/bottom_scan_data_container.dart';
+import 'package:scanner_app/features/qr_create_and_scanner/presentation/views/widgets/flash_and_image_container.dart';
 
 class QRCodeScanner extends StatefulWidget {
   const QRCodeScanner({Key? key}) : super(key: key);
@@ -14,14 +15,8 @@ class QRCodeScanner extends StatefulWidget {
 
 class _QRCodeScannerState extends State<QRCodeScanner>
     with SingleTickerProviderStateMixin {
-  final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
-  String qrData = "The code has not been scanned yet";
-  bool showQRImage = false;
   late AnimationController _controller;
   late Animation<double> _animation;
-  QRViewController? qrViewController;
-
-  Timer? resetTimer;
 
   @override
   void initState() {
@@ -34,36 +29,10 @@ class _QRCodeScannerState extends State<QRCodeScanner>
     _animation = Tween<double>(begin: 0, end: 250).animate(_controller);
   }
 
-  // Qr Code Scanner Function
-  void _onQRViewCreated(QRViewController controller) {
-    qrViewController = controller;
-
-    controller.scannedDataStream.listen((scanData) async {
-      resetTimer?.cancel();
-      setState(() {
-        qrData = scanData.code ?? 'QR not defined';
-        showQRImage = true; // after scanning qr ==> show qr image
-        _controller.stop(); // stop blue line
-      });
-
-      // Enable vibration throurgh scanning
-      await HapticFeedback.vibrate();
-
-      resetTimer = Timer(const Duration(seconds: 3), () {
-        setState(() {
-          qrData = 'The code has not been scanned yet';
-          showQRImage = false;
-          _controller.repeat(); // restart ble line
-        });
-      });
-    });
-  }
-
   @override
   void dispose() {
     _controller.dispose();
-    qrViewController?.dispose();
-    resetTimer?.cancel();
+    context.read<QRCodeScannerProvider>().disposeResources();
     super.dispose();
   }
 
@@ -87,99 +56,74 @@ class _QRCodeScannerState extends State<QRCodeScanner>
         centerTitle: true,
         backgroundColor: Colors.orange,
       ),
-      body: Stack(
-        children: [
-          // QR Scanner
-          QRView(
-            key: qrKey,
-            onQRViewCreated: _onQRViewCreated,
-            overlay: QrScannerOverlayShape(
-              borderColor: Colors.orange,
-              borderRadius: 10,
-              borderLength: 30,
-              borderWidth: 7,
-              cutOutSize: width * 0.63,
-            ),
-          ),
-          // Overlay with transparent square and animated blue line
-          Center(
-            child: Stack(
+      body: ChangeNotifierProvider(
+        create: (_) => QRCodeScannerProvider(),
+        child: Consumer<QRCodeScannerProvider>(
+          builder: (context, provider, child) {
+            return Stack(
               children: [
-                Container(
-                  width: width * 0.63,
-                  height: height * 0.30,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.transparent),
+                // QR Scanner
+                QRView(
+                  key: provider.qrKey,
+                  onQRViewCreated: provider.initializeQRView,
+                  overlay: QrScannerOverlayShape(
+                    borderColor: Colors.orange,
+                    borderRadius: 10,
+                    borderLength: 30,
+                    borderWidth: 7,
+                    cutOutSize: width * 0.63,
                   ),
-                  child: showQRImage
-                      ? QrImageView(
-                          data: qrData,
-                          version: QrVersions.auto,
-                          size: width * 0.63,
-                          backgroundColor: Colors.white,
-                        )
-                      : null,
                 ),
-                if (!showQRImage)
-                  AnimatedBuilder(
-                    animation: _animation,
-                    builder: (context, child) {
-                      return Positioned(
-                        top: _animation.value,
-                        left: 0,
-                        right: 0,
-                        child: Container(
-                          height: 3,
-                          decoration: BoxDecoration(
-                            color: Colors.blue,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.3),
-                                offset: const Offset(0, 2),
-                                blurRadius: 5,
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-              ],
-            ),
-          ),
-          // Display scanned data at the bottom
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              color: Colors.black.withOpacity(0.8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(
-                      qrData,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.copy, color: Colors.white),
-                    onPressed: () {
-                      Clipboard.setData(ClipboardData(text: qrData));
 
-                      customShowSnackBar(
-                          context: context, content: 'Link copied!');
-                    },
+                // Centered QR Scanner View with the animation
+                Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Scanner View with Animation
+                      Stack(
+                        children: [
+                          Container(
+                            width: width * 0.63,
+                            height: height * 0.30,
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.transparent,
+                              ),
+                            ),
+                            child: provider.showQRImage
+                                ? ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Image.file(
+                                      provider.selectedImage!,
+                                      fit: BoxFit.cover,
+                                      width: width * 0.63,
+                                      height: height * 0.30,
+                                    ),
+                                  )
+                                : null,
+                          ),
+                          if (!provider.showQRImage)
+                            AnimatedBlueLine(animation: _animation),
+                        ],
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-          ),
-        ],
+                ),
+                // Flash and Photo Buttons (Black Bar)
+                FlashAndImageContainer(
+                  width: width,
+                  flashColor: provider.isFlashOn ? Colors.yellow : Colors.white,
+                  flashOnPressed: provider.toggleFlash,
+                  imageOnPressed: () => provider.pickImageFromGallery(context),
+                ),
+
+                // Display scanned data at the bottom
+                BottomScanDataContainer(qrData: provider.qrData),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
