@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scanner_app/features/home/presentation/views/widgets/build_card.dart';
+import 'package:scanner_app/features/image_to_pdf/presentation/views/PdfListPage.dart';
+import 'package:scanner_app/features/image_to_pdf/presentation/views/image_to_pdf_view.dart';
 import 'package:scanner_app/features/image_to_text/presentation/views/image_to_text_view.dart';
 import 'package:scanner_app/features/qr_create_and_scanner/presentation/views/qr_code_home_view.dart';
 
@@ -45,7 +47,24 @@ class HomePage extends StatelessWidget {
                     icon: Icons.picture_as_pdf,
                     title: 'Image to PDF',
                     onTap: () {
-                      // Navigate to Image to PDF page
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ImageToPdfView(),
+                        ),
+                      );
+                    },
+                  ),
+                  BuildFeatureCard(
+                    icon: Icons.folder,
+                    title: 'Saved PDFs',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const PdfListPage(),
+                        ),
+                      );
                     },
                   ),
                   BuildFeatureCard(

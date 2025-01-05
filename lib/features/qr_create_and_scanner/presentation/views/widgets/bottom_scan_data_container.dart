@@ -28,6 +28,8 @@ class BottomScanDataContainer extends StatelessWidget {
                   fontSize: 18,
                 ),
                 textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             IconButton(

@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart';
 import 'package:qr_code_scanner_plus/qr_code_scanner_plus.dart';
 
 class QRCodeScannerProvider extends ChangeNotifier {
@@ -12,10 +12,13 @@ class QRCodeScannerProvider extends ChangeNotifier {
   bool showQRImage = false;
   QRViewController? qrViewController;
 
-  File? selectedImage;
+  String? scannedCode;
   Timer? resetTimer;
-
   bool isFlashOn = false;
+
+  File? selectedImage;
+
+  bool showAnimatedBlueLine = true;
 
   void initializeQRView(QRViewController controller) {
     qrViewController = controller;
@@ -25,14 +28,19 @@ class QRCodeScannerProvider extends ChangeNotifier {
       qrData = scanData.code ?? 'QR not defined';
       showQRImage = true;
 
-      await HapticFeedback.vibrate();
+      if (scanData.code != null) {
+        scannedCode = scanData.code!;
+        showAnimatedBlueLine = false;
+      }
 
+      await HapticFeedback.vibrate();
       notifyListeners();
 
       resetTimer = Timer(const Duration(seconds: 3), () {
         qrData = 'The code has not been scanned yet';
         showQRImage = false;
-
+        scannedCode = null;
+        showAnimatedBlueLine = true;
         notifyListeners();
       });
     });
@@ -77,6 +85,17 @@ class QRCodeScannerProvider extends ChangeNotifier {
         qrData = "Error decoding QR code: $e";
         showQRImage = false;
       }
+
+      showAnimatedBlueLine = false;
+
+      resetTimer = Timer(const Duration(seconds: 5), () {
+        showQRImage = false;
+        scannedCode = null;
+        selectedImage = null;
+        qrData = 'The code has not been scanned yet';
+        showAnimatedBlueLine = true;
+        notifyListeners();
+      });
 
       notifyListeners();
     }

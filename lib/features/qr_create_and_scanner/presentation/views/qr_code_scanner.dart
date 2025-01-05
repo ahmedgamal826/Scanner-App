@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_code_scanner_plus/qr_code_scanner_plus.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:scanner_app/features/qr_create_and_scanner/data/provider/qr_scanner_provider.dart';
 import 'package:scanner_app/features/qr_create_and_scanner/presentation/views/widgets/animated_blue_line.dart';
 import 'package:scanner_app/features/qr_create_and_scanner/presentation/views/widgets/bottom_scan_data_container.dart';
@@ -62,7 +63,6 @@ class _QRCodeScannerState extends State<QRCodeScanner>
           builder: (context, provider, child) {
             return Stack(
               children: [
-                // QR Scanner
                 QRView(
                   key: provider.qrKey,
                   onQRViewCreated: provider.initializeQRView,
@@ -74,52 +74,51 @@ class _QRCodeScannerState extends State<QRCodeScanner>
                     cutOutSize: width * 0.63,
                   ),
                 ),
-
-                // Centered QR Scanner View with the animation
                 Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Scanner View with Animation
                       Stack(
                         children: [
                           Container(
                             width: width * 0.63,
                             height: height * 0.30,
                             decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
                               border: Border.all(
                                 color: Colors.transparent,
                               ),
                             ),
-                            child: provider.showQRImage
-                                ? ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Image.file(
-                                      provider.selectedImage!,
-                                      fit: BoxFit.cover,
-                                      width: width * 0.63,
-                                      height: height * 0.30,
-                                    ),
+                            child: provider.showQRImage &&
+                                    provider.scannedCode != null
+                                ? QrImageView(
+                                    data: provider.scannedCode!,
+                                    version: QrVersions.auto,
+                                    size: 200.0,
+                                    backgroundColor: Colors.white,
                                   )
-                                : null,
+                                : provider.selectedImage != null
+                                    ? Image.file(provider.selectedImage!)
+                                    : null,
                           ),
-                          if (!provider.showQRImage)
+                          if (provider.showAnimatedBlueLine)
                             AnimatedBlueLine(animation: _animation),
                         ],
                       ),
                     ],
                   ),
                 ),
-                // Flash and Photo Buttons (Black Bar)
                 FlashAndImageContainer(
                   width: width,
                   flashColor: provider.isFlashOn ? Colors.yellow : Colors.white,
                   flashOnPressed: provider.toggleFlash,
                   imageOnPressed: () => provider.pickImageFromGallery(context),
                 ),
-
-                // Display scanned data at the bottom
-                BottomScanDataContainer(qrData: provider.qrData),
+                BottomScanDataContainer(
+                  qrData: provider.qrData.isNotEmpty
+                      ? provider.qrData
+                      : "No data scanned",
+                ),
               ],
             );
           },
