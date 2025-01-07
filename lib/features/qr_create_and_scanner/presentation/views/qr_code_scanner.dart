@@ -18,6 +18,7 @@ class _QRCodeScannerState extends State<QRCodeScanner>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
+  QRCodeScannerProvider? _qrProvider; // مرجع للـ Provider
 
   @override
   void initState() {
@@ -28,12 +29,15 @@ class _QRCodeScannerState extends State<QRCodeScanner>
     )..repeat(reverse: true);
 
     _animation = Tween<double>(begin: 0, end: 250).animate(_controller);
+
+    // حفظ مرجع للـ Provider
+    _qrProvider = QRCodeScannerProvider();
   }
 
   @override
   void dispose() {
     _controller.dispose();
-    context.read<QRCodeScannerProvider>().disposeResources();
+    _qrProvider?.disposeResources(); // استخدام المرجع مباشرة
     super.dispose();
   }
 
@@ -57,8 +61,8 @@ class _QRCodeScannerState extends State<QRCodeScanner>
         centerTitle: true,
         backgroundColor: Colors.orange,
       ),
-      body: ChangeNotifierProvider(
-        create: (_) => QRCodeScannerProvider(),
+      body: ChangeNotifierProvider<QRCodeScannerProvider>.value(
+        value: _qrProvider!,
         child: Consumer<QRCodeScannerProvider>(
           builder: (context, provider, child) {
             return Stack(

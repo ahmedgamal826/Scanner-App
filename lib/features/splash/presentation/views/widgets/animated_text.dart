@@ -11,7 +11,7 @@ class AnimatedText extends StatelessWidget {
     return AnimatedTextKit(
       animatedTexts: [
         TyperAnimatedText(
-          'Scanner App',
+          'SmartScanner',
           textStyle: const TextStyle(
             fontSize: 32,
             fontWeight: FontWeight.bold,

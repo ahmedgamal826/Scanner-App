@@ -1,25 +1,23 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 
-void showAnimatedDialog({
-  required String title,
+void showCustomDeleteDialog({
   required BuildContext context,
   required VoidCallback onConfirm,
-  required String description,
 }) {
   AwesomeDialog(
     context: context,
     dialogType: DialogType.question,
     animType: AnimType.topSlide,
-    title: title,
-    desc: description,
-    btnCancelOnPress: () {},
-    btnOkOnPress: onConfirm,
+    title: 'Confirm Delete',
+    desc: 'Are you sure you want to delete this PDF?',
     titleTextStyle: const TextStyle(
-      fontSize: 22,
       fontWeight: FontWeight.bold,
+      fontSize: 22,
     ),
     descTextStyle: const TextStyle(fontSize: 18),
+    btnCancelOnPress: () {},
+    btnOkOnPress: onConfirm,
     btnOkColor: Colors.red,
     btnCancelColor: Colors.grey,
   ).show();

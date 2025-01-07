@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:scanner_app/features/saved_texts/presentation/views/saved_texts_view.dart';
+import 'package:scanner_app/features/write_page/presentation/views/write_main_view.dart';
 import 'package:scanner_app/features/home/presentation/views/widgets/build_card.dart';
-import 'package:scanner_app/features/image_to_pdf/presentation/views/PdfListPage.dart';
+import 'package:scanner_app/features/pdf_to_text/presentation/views/pdf_to_text_view.dart';
+import 'package:scanner_app/features/saved_pdfs/presentation/views/PdfListPage.dart';
 import 'package:scanner_app/features/image_to_pdf/presentation/views/image_to_pdf_view.dart';
 import 'package:scanner_app/features/image_to_text/presentation/views/image_to_text_view.dart';
 import 'package:scanner_app/features/qr_create_and_scanner/presentation/views/qr_code_home_view.dart';
+import 'package:scanner_app/features/text_to_speech/presentation/views/text_to_speech_view.dart';
 
 class HomePage extends StatelessWidget {
   @override
@@ -50,7 +54,7 @@ class HomePage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const ImageToPdfView(),
+                          builder: (context) => ImageToPdfView(),
                         ),
                       );
                     },
@@ -68,10 +72,27 @@ class HomePage extends StatelessWidget {
                     },
                   ),
                   BuildFeatureCard(
+                    icon: Icons.volume_up,
+                    title: 'Text to Speech',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => TextToSpeechView(),
+                        ),
+                      );
+                    },
+                  ),
+                  BuildFeatureCard(
                     icon: Icons.text_snippet,
                     title: 'PDF to Text',
                     onTap: () {
-                      // Navigate to PDF to Text page
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PdfToTextView(),
+                        ),
+                      );
                     },
                   ),
                   BuildFeatureCard(
@@ -94,6 +115,30 @@ class HomePage extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (context) => QrCodeHomeView(),
+                        ),
+                      );
+                    },
+                  ),
+                  BuildFeatureCard(
+                    icon: Icons.edit,
+                    title: 'Write to File',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const MainPage(),
+                        ),
+                      );
+                    },
+                  ),
+                  BuildFeatureCard(
+                    icon: Icons.save_alt,
+                    title: 'Saved Text Files',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SavedTextsPage(),
                         ),
                       );
                     },

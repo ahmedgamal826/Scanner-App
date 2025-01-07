@@ -41,9 +41,9 @@ class CustomSnackBar {
       SnackBar(
         content: Row(
           children: [
-            Icon(
+            const Icon(
               Icons.error_outline,
-              color: Colors.red.shade400,
+              color: Colors.white,
             ),
             const SizedBox(width: 10),
             Expanded(

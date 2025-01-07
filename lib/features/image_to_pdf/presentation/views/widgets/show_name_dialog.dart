@@ -15,9 +15,18 @@ class ShowNameDialog extends StatelessWidget {
     return AlertDialog(
       title: const Text('Enter PDF Name'),
       content: TextField(
+        cursorColor: Colors.orange,
         controller: nameController,
-        decoration: const InputDecoration(
+        decoration: InputDecoration(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: Colors.orange),
+          ),
           labelText: 'PDF Name',
+          labelStyle: const TextStyle(color: Colors.black),
         ),
       ),
       actions: [

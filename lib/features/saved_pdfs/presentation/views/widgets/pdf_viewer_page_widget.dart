@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
-import 'package:share_plus/share_plus.dart'; // استيراد مكتبة المشاركة
+import 'package:share_plus/share_plus.dart';
 
-class PdfViewerPage extends StatefulWidget {
+class PdfViewerPageWidget extends StatefulWidget {
   final String path;
   final String pdfName;
 
-  const PdfViewerPage({
+  const PdfViewerPageWidget({
     super.key,
     required this.path,
     required this.pdfName,
   });
 
   @override
-  State<PdfViewerPage> createState() => _PdfViewerPageState();
+  State<PdfViewerPageWidget> createState() => _PdfViewerPageState();
 }
 
-class _PdfViewerPageState extends State<PdfViewerPage> {
+class _PdfViewerPageState extends State<PdfViewerPageWidget> {
   int _currentPage = 0;
   int _totalPages = 0;
   late PDFViewController _pdfViewController;
@@ -32,17 +32,17 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.white),
-        backgroundColor: Colors.orange,
         title: Text(
-          '${widget.pdfName}',
-          style: TextStyle(
+          widget.pdfName,
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 23,
             fontWeight: FontWeight.bold,
             fontStyle: FontStyle.italic,
           ),
         ),
+        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: Colors.orange,
         actions: [
           IconButton(
             icon: const Icon(Icons.share),
@@ -55,25 +55,25 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
           PDFView(
             filePath: widget.path,
             enableSwipe: true,
-            fitPolicy: FitPolicy.WIDTH, // عرض الصفحة بالكامل
+            fitPolicy: FitPolicy.BOTH,
+            pageFling: true,
             onRender: (pages) {
               setState(() {
-                _totalPages = pages ?? 0; // تحديث عدد الصفحات
+                _totalPages = pages ?? 0;
               });
             },
             onViewCreated: (controller) {
-              _pdfViewController = controller; // حفظ التحكم في الـ PDF
+              _pdfViewController = controller;
             },
             onPageChanged: (page, total) {
               setState(() {
-                _currentPage = page ?? 0; // تحديث الصفحة الحالية
+                _currentPage = page ?? 0;
               });
             },
           ),
           Positioned(
-            bottom: 20, // تحديد المسافة من الأسفل
-            left: MediaQuery.of(context).size.width / 2 -
-                50, // توسيط المربع في أسفل الشاشة
+            bottom: 20,
+            left: MediaQuery.of(context).size.width / 2 - 50,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
